@@ -1,0 +1,222 @@
+{
+	"clients": {
+		"rest": {
+			"version": "1.0",
+			"collections": [
+				{
+					"name": "Todo Backend",
+					"folders": [
+						{
+							"name": "Auth",
+							"description": "Authentication Endpoints",
+							"requests": [
+								{
+									"name": "Register",
+									"url": "{{baseUrl}}/auth/register",
+									"method": "POST",
+									"headers": [
+										{ "name": "Content-Type", "value": "application/json" }
+									],
+									"body": {
+										"type": "json",
+										"raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}",
+										"form": []
+									},
+									"preRequestScript": "",
+									"tests": "pm.test(\"Status code is 201\", function () {\n    pm.response.to.have.status(201);\n});\n\npm.test(\"Response has id and email\", function () {\n    const response = pm.response.json();\n    pm.expect(response.id).to.exist;\n    pm.expect(response.email).to.eql(\"test@example.com\");\n    pm.environment.set(\"userId\", response.id);\n});",
+									"collectionId": "4865e94b-972d-452f-987f-1d8820f18c67",
+									"folderId": "1b084931-15cf-4d9f-a05e-855c3c0a52d3",
+									"modified": "2023-11-19T23:00:00.000Z",
+									"created": "2023-11-19T23:00:00.000Z"
+								},
+								{
+									"name": "Login",
+									"url": "{{baseUrl}}/auth/login",
+									"method": "POST",
+									"headers": [
+										{ "name": "Content-Type", "value": "application/json" }
+									],
+									"body": {
+										"type": "json",
+										"raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}",
+										"form": []
+									},
+									"preRequestScript": "",
+									"tests": "pm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Response has token\", function () {\n    const response = pm.response.json();\n    pm.expect(response.token).to.exist;\n    pm.environment.set(\"authToken\", response.token);\n});",
+									"collectionId": "4865e94b-972d-452f-987f-1d8820f18c67",
+									"folderId": "1b084931-15cf-4d9f-a05e-855c3c0a52d3",
+									"modified": "2023-11-19T23:00:00.000Z",
+									"created": "2023-11-19T23:00:00.000Z"
+								},
+								{
+									"name": "Me",
+									"url": "{{baseUrl}}/auth/me",
+									"method": "GET",
+									"headers": [
+										{ "name": "Authorization", "value": "Bearer {{authToken}}" }
+									],
+									"body": {
+										"type": "none",
+										"raw": "",
+										"form": []
+									},
+									"preRequestScript": "",
+									"tests": "pm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Response has user details\", function () {\n    const response = pm.response.json();\n    pm.expect(response.id).to.eql(pm.environment.get(\"userId\"));\n    pm.expect(response.email).to.eql(\"test@example.com\");\n});",
+									"collectionId": "4865e94b-972d-452f-987f-1d8820f18c67",
+									"folderId": "1b084931-15cf-4d9f-a05e-855c3c0a52d3",
+									"modified": "2023-11-19T23:00:00.000Z",
+									"created": "2023-11-19T23:00:00.000Z"
+								}
+							]
+						},
+						{
+							"name": "Tasks",
+							"description": "Task Management Endpoints",
+							"requests": [
+								{
+									"name": "Extract Tasks From Text",
+									"url": "{{baseUrl}}/tasks/from-text",
+									"method": "POST",
+									"headers": [
+										{ "name": "Content-Type", "value": "application/json" },
+										{ "name": "Authorization", "value": "Bearer {{authToken}}" }
+									],
+									"body": {
+										"type": "json",
+										"raw": "{\n  \"text\": \"Buy milk and eggs tomorrow, call mom on Friday\"\n}",
+										"form": []
+									},
+									"preRequestScript": "",
+									"tests": "pm.test(\"Status code is 201\", function () {\n    pm.response.to.have.status(201);\n});\n\npm.test(\"Response is an array of tasks\", function () {\n    const response = pm.response.json();\n    pm.expect(Array.isArray(response)).to.be.true;\n    if (response.length > 0) {\n        pm.expect(response[0].id).to.exist;\n        pm.expect(response[0].title).to.exist;\n        pm.environment.set(\"taskId\", response[0].id);\n    }\n});",
+									"collectionId": "4865e94b-972d-452f-987f-1d8820f18c67",
+									"folderId": "09a9a08e-c9b0-4d43-982f-37c2293b6e83",
+									"modified": "2023-11-19T23:00:00.000Z",
+									"created": "2023-11-19T23:00:00.000Z"
+								},
+								{
+									"name": "Get All Tasks",
+									"url": "{{baseUrl}}/tasks/",
+									"method": "GET",
+									"headers": [
+										{ "name": "Authorization", "value": "Bearer {{authToken}}" }
+									],
+									"body": {
+										"type": "none",
+										"raw": "",
+										"form": []
+									},
+									"preRequestScript": "",
+									"tests": "pm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Response is an array\", function () {\n    pm.expect(Array.isArray(pm.response.json())).to.be.true;\n});",
+									"collectionId": "4865e94b-972d-452f-987f-1d8820f18c67",
+									"folderId": "09a9a08e-c9b0-4d43-982f-37c2293b6e83",
+									"modified": "2023-11-19T23:00:00.000Z",
+									"created": "2023-11-19T23:00:00.000Z"
+								},
+								{
+									"name": "Create Task",
+									"url": "{{baseUrl}}/tasks/",
+									"method": "POST",
+									"headers": [
+										{ "name": "Content-Type", "value": "application/json" },
+										{ "name": "Authorization", "value": "Bearer {{authToken}}" }
+									],
+									"body": {
+										"type": "json",
+										"raw": "{\n  \"title\": \"Manual Task\",\n  \"description\": \"Created manually\",\n  \"priority\": \"low\",\n  \"due_date\": \"2025-12-01T10:00:00Z\"\n}",
+										"form": []
+									},
+									"preRequestScript": "",
+									"tests": "pm.test(\"Status code is 201\", function () {\n    pm.response.to.have.status(201);\n});\n\npm.test(\"Response has id and title\", function () {\n    const response = pm.response.json();\n    pm.expect(response.id).to.exist;\n    pm.expect(response.title).to.eql(\"Manual Task\");\n    pm.environment.set(\"manualTaskId\", response.id);\n});",
+									"collectionId": "4865e94b-972d-452f-987f-1d8820f18c67",
+									"folderId": "09a9a08e-c9b0-4d43-982f-37c2293b6e83",
+									"modified": "2023-11-19T23:00:00.000Z",
+									"created": "2023-11-19T23:00:00.000Z"
+								},
+								{
+									"name": "Get Task By ID",
+									"url": "{{baseUrl}}/tasks/{{manualTaskId}}",
+									"method": "GET",
+									"headers": [
+										{ "name": "Authorization", "value": "Bearer {{authToken}}" }
+									],
+									"body": {
+										"type": "none",
+										"raw": "",
+										"form": []
+									},
+									"preRequestScript": "",
+									"tests": "pm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Response has correct task details\", function () {\n    const response = pm.response.json();\n    pm.expect(response.id).to.eql(pm.environment.get(\"manualTaskId\"));\n    pm.expect(response.title).to.eql(\"Manual Task\");\n});",
+									"collectionId": "4865e94b-972d-452f-987f-1d8820f18c67",
+									"folderId": "09a9a08e-c9b0-4d43-982f-37c2293b6e83",
+									"modified": "2023-11-19T23:00:00.000Z",
+									"created": "2023-11-19T23:00:00.000Z"
+								},
+								{
+									"name": "Update Task",
+									"url": "{{baseUrl}}/tasks/{{manualTaskId}}",
+									"method": "PUT",
+									"headers": [
+										{ "name": "Content-Type", "value": "application/json" },
+										{ "name": "Authorization", "value": "Bearer {{authToken}}" }
+									],
+									"body": {
+										"type": "json",
+										"raw": "{\n  \"description\": \"Updated description\",\n  \"priority\": \"high\"\n}",
+										"form": []
+									},
+									"preRequestScript": "",
+									"tests": "pm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Task details are updated\", function () {\n    const response = pm.response.json();\n    pm.expect(response.description).to.eql(\"Updated description\");\n    pm.expect(response.priority).to.eql(\"high\");\n});",
+									"collectionId": "4865e94b-972d-452f-987f-1d8820f18c67",
+									"folderId": "09a9a08e-c9b0-4d43-982f-37c2293b6e83",
+									"modified": "2023-11-19T23:00:00.000Z",
+									"created": "2023-11-19T23:00:00.000Z"
+								},
+								{
+									"name": "Delete Task",
+									"url": "{{baseUrl}}/tasks/{{manualTaskId}}",
+									"method": "DELETE",
+									"headers": [
+										{ "name": "Authorization", "value": "Bearer {{authToken}}" }
+									],
+									"body": {
+										"type": "none",
+										"raw": "",
+										"form": []
+									},
+									"preRequestScript": "",
+									"tests": "pm.test(\"Status code is 204\", function () {\n    pm.response.to.have.status(204);\n});",
+									"collectionId": "4865e94b-972d-452f-987f-1d8820f18c67",
+									"folderId": "09a9a08e-c9b0-4d43-982f-37c2293b6e83",
+									"modified": "2023-11-19T23:00:00.000Z",
+									"created": "2023-11-19T23:00:00.000Z"
+								}
+							]
+						}
+					],
+					"variables": [
+						{
+							"name": "baseUrl",
+							"value": "http://localhost:8080"
+						},
+						{
+							"name": "authToken",
+							"value": ""
+						},
+						{
+							"name": "userId",
+							"value": ""
+						},
+						{
+							"name": "taskId",
+							"value": ""
+						},
+						{
+							"name": "manualTaskId",
+							"value": ""
+						}
+					]
+				}
+			]
+		}
+	}
+}

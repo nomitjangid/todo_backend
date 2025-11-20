@@ -1,0 +1,30 @@
+# Binaries for programs and plugins
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test binary, generated with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when using gocov paired with an external tool
+*.out
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+# Go module path cache
+# For module "example.com/mod", path would be "$GOPATH/pkg/mod/example.com/mod@v1.0.0"
+# go.mod and go.sum should be committed, but this path could be ignored.
+# vendor/
+
+# Environment files
+.env
+
+# IDE specific files
+.idea/
+.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db
