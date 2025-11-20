@@ -7,6 +7,7 @@ import (
 	"todo-backend/internal/llm"
 	"todo-backend/internal/models"
 	"todo-backend/internal/repositories"
+	"time"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -95,7 +96,12 @@ func (s *TaskService) ExtractAndCreateTasks(ctx context.Context, text string, us
 			UserID:      userID,
 			Title:       llmTask.Title,
 			Description: llmTask.Description,
-			DueDate:     llmTask.DueDate,
+			DueDate: func() *time.Time {
+				if llmTask.DueDate.IsZero() {
+					return nil
+				}
+				return &llmTask.DueDate
+			}(),
 			Priority:    llmTask.Priority,
 			RawText:     text, // Store the raw text that led to this task
 		}

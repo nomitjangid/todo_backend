@@ -26,8 +26,15 @@ func (h *TaskHandler) CreateTask(c *gin.Context) {
 		return
 	}
 
-	task, err := h.taskService.CreateTask(userID, &req)
-	if err != nil {
+	task := &models.Task{
+		UserID:      userID,
+		Title:       req.Title,
+		Description: req.Description,
+		DueDate:     req.DueDate,
+		Priority:    req.Priority,
+	}
+
+	if err := h.taskService.CreateTask(task); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -44,7 +51,7 @@ func (h *TaskHandler) ExtractAndCreateTasks(c *gin.Context) {
 		return
 	}
 
-	tasks, err := h.taskService.ExtractAndCreateTasks(userID, req.Text)
+	tasks, err := h.taskService.ExtractAndCreateTasks(c.Request.Context(), req.Text, userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -56,7 +63,7 @@ func (h *TaskHandler) ExtractAndCreateTasks(c *gin.Context) {
 func (h *TaskHandler) GetTasks(c *gin.Context) {
 	userID := c.MustGet("userID").(uuid.UUID)
 
-	tasks, err := h.taskService.GetUserTasks(userID)
+	tasks, err := h.taskService.GetTasksByUserID(userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -96,8 +103,26 @@ func (h *TaskHandler) UpdateTask(c *gin.Context) {
 		return
 	}
 
-	task, err := h.taskService.UpdateTask(userID, taskID, &req)
-	if err != nil {
+	task := &models.Task{
+		ID: taskID,
+	}
+	if req.Title != nil {
+		task.Title = *req.Title
+	}
+	if req.Description != nil {
+		task.Description = *req.Description
+	}
+	if req.DueDate != nil {
+		task.DueDate = req.DueDate
+	}
+	if req.Priority != nil {
+		task.Priority = *req.Priority
+	}
+	if req.Completed != nil {
+		task.Completed = *req.Completed
+	}
+
+	if err := h.taskService.UpdateTask(task, userID); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

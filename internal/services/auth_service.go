@@ -78,3 +78,8 @@ func (s *AuthService) LoginUser(email, password string) (string, error) {
 
 	return tokenString, nil
 }
+
+// GetUserByID retrieves a user by their ID
+func (s *AuthService) GetUserByID(id uuid.UUID) (*models.User, error) {
+	return s.userRepo.GetUserByID(id)
+}

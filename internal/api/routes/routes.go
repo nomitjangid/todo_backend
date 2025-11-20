@@ -11,7 +11,7 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler, taskHand
 	// Middleware
 	router.Use(middleware.CORS())
 	router.Use(middleware.Logger())
-	router.Use(middleware.Recovery())
+	router.Use(middleware.RecoveryMiddleware())
 
 	// Health check
 	router.GET("/health", func(c *gin.Context) {

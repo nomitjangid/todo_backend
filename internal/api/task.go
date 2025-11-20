@@ -108,7 +108,7 @@ func CreateTask(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid due_date format"})
 			return
 		}
-		task.DueDate = parsedTime
+		task.DueDate = &parsedTime
 	}
 
 	if err := taskService.CreateTask(task); err != nil {
@@ -204,7 +204,7 @@ func UpdateTask(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid due_date format"})
 			return
 		}
-		task.DueDate = parsedTime
+		task.DueDate = &parsedTime
 	}
 
 	if err := taskService.UpdateTask(task, userIDUUID); err != nil {
